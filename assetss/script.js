@@ -7,6 +7,8 @@ const searchBtn = document.getElementById("searchBtn");
 // const current = $("#current");
 // const fiveDay = $("#five-day");
 // const clearBtn = $("#clearBtn");
+let key ='d9e1eb472c1a4120348bfa4ea31aa048';
+let units = 'imperial'
 
 const weather = data;
 weather.temperature = {
@@ -33,9 +35,8 @@ pullCoords();
 //  var lastCity = JSON.parse(localStorage.getItem('city'));
  function pullCoords(data) {
      console.log(lastCity)
-     let key ='d9e1eb472c1a4120348bfa4ea31aa048'
      var lastCity = JSON.parse(localStorage.getItem('city'));
-     let urlCoords = `https://api.openweathermap.org/data/2.5/forecast?q=${lastCity}&appid=${key}&units=imperial`
+     let urlCoords = `https://api.openweathermap.org/data/2.5/forecast?q=${lastCity}&units=${units}&appid=${key}`
     //  var lastCity = JSON.parse(localStorage.getItem('city'));
     fetch(urlCoords)
     .then(response => {
@@ -49,24 +50,23 @@ pullCoords();
         let lon = data.city.coord.lon;
         localStorage.setItem('lon', JSON.stringify(lon));
         console.log(lon);
-    })    
+        return fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely&units=imperial&appid=${key}`);
+    }).then(response => {
+        let data = response.json();
+        return data;
+    }).then(data => {
+        console.log(data);
+    })   
  }
 let lat = JSON.parse(localStorage.getItem('lat'));
 let lon = JSON.parse(localStorage.getItem('lon'));
-let key ='d9e1eb472c1a4120348bfa4ea31aa048'
 let cnt = 5
-let url = `https://api.openweathermap.org/data/2.5/forecast/daily?lat=${lat}&lon=${lon}&cnt=${cnt}&appid=${key}`
+let url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely&appid=${key}`
 console.log(`${lat} ${lon}`)
 fetch(url)
 .then(response => {
     let data = response.json();
    return data;
 }).then(data=> {
-    console.log(data)
-    let lat = data.city.coord.lat;
-    localStorage.setItem('lat', JSON.stringify(lat));
-    console.log(lat);
-    let lon = data.city.coord.lon;
-    localStorage.setItem('lon', JSON.stringify(lon));
-    console.log(lon);
+    console.log(data);
 })  
