@@ -10,6 +10,8 @@ let temperatureEl = document.getElementById('temperature');
 let windEl = document.getElementById('wind');
 let humidityEl = document.getElementById('humidity');
 let uvIndexEl = document.getElementById('uvIndex');
+let currentCity = document.getElementById('city');
+let iconEl = document.getElementById('icon');
 //setting the key and units
 let key ='d9e1eb472c1a4120348bfa4ea31aa048';
 let units = 'imperial';
@@ -23,6 +25,9 @@ weather.temperature = {
 let city = document.getElementById("searchInput").value;
 
 function displayWeather(){
+currentCity.innerHTML = localStorage.getItem('city');
+$(icon).html(`<img src="assets/icons/${icon.value}.svg"/>`);
+iconEl.style.width = '5%';
 temperatureEl.innerHTML = temperature.value;
 windEl.innerHTML = wind.value;
 humidityEl.innerHTML = humidity.value;
@@ -72,6 +77,8 @@ pullCoords();
         console.log(humidity.value);
         uvIndex.value = data.current.uvi;
         console.log(uvIndex.value);
+        icon.value = data.current.weather[0].icon;
+        // main = data.weather[0].main;
     }).then(function () {
         displayWeather();
         // console.log(data.weather[0].main);
