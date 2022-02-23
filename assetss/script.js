@@ -2,13 +2,18 @@
 var searchInput = document.getElementById("#searchInput");
 //grabbing search btn from HTML page
 const searchBtn = document.getElementById("searchBtn");
-// const mainContent = $("#mainContent");
-// var recentSearches = $("#recents");
-// const current = $("#current");
-// const fiveDay = $("#five-day");
-// const clearBtn = $("#clearBtn");
+//pulling in today container
+let todayEl = document.getElementById('today');
+//pulling in 5 day forecast contanier
+let forecastEl = document.getElementById('forecast');
+let temperatureEl = document.getElementById('temperature');
+let windEl = document.getElementById('wind');
+let humidityEl = document.getElementById('humidity');
+let uvIndexEl = document.getElementById('uvIndex');
+//setting the key and units
 let key ='d9e1eb472c1a4120348bfa4ea31aa048';
-let units = 'imperial'
+let units = 'imperial';
+
 
 const weather = data;
 weather.temperature = {
@@ -17,9 +22,12 @@ weather.temperature = {
 //setting the city to what is typed in by the user
 let city = document.getElementById("searchInput").value;
 
-
-console.log(localStorage)
-console.log(city);
+function displayWeather(){
+temperatureEl.innerHTML = temperature.value;
+windEl.innerHTML = wind.value;
+humidityEl.innerHTML = humidity.value;
+uvIndexEl.innerHTML = uvIndex.value;
+}
 
 //function for when search is clicked
 searchBtn.addEventListener("click", function(event){
@@ -50,23 +58,26 @@ pullCoords();
         let lon = data.city.coord.lon;
         localStorage.setItem('lon', JSON.stringify(lon));
         console.log(lon);
-        return fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely&units=imperial&appid=${key}`);
+        return fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely&units=${units}&appid=${key}`);
     }).then(response => {
         let data = response.json();
         return data;
     }).then(data => {
         console.log(data);
-    })   
+        temperature.value = (Math.floor(data.current.temp));
+        console.log(Math.floor(temperature.value));
+        wind.value = data.current.wind_speed;
+        console.log(wind.value);
+        humidity.value = data.current.humidity;
+        console.log(humidity.value);
+        uvIndex.value = data.current.uvi;
+        console.log(uvIndex.value);
+    }).then(function () {
+        displayWeather();
+        // console.log(data.weather[0].main);
+        // localStorage.setItem("search", main);
+    });
  }
 let lat = JSON.parse(localStorage.getItem('lat'));
 let lon = JSON.parse(localStorage.getItem('lon'));
-let cnt = 5
-let url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely&appid=${key}`
-console.log(`${lat} ${lon}`)
-fetch(url)
-.then(response => {
-    let data = response.json();
-   return data;
-}).then(data=> {
-    console.log(data);
-})  
+
