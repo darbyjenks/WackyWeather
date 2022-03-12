@@ -46,6 +46,7 @@
                   </button>
                   <hr class="hr weather-hr" />
                 </div>
+                <ul id = 'cityList'></ul>
               </div>
             </div>
           </form>
@@ -59,19 +60,25 @@
             role="region"
             aria-live="polite"
           >
-          <div id = 'city'></div>
-          <div id = 'icon'></div>
+          <div>
+            <div id = 'city' ></div>
+            <a>
+              <img id = 'icon'>
+          </a>
+        </div>
         <div id = 'temperature'></div>
         <div id = 'wind'></div>
         <div id = 'humidity'></div>
         <div id = 'uvIndex'></div>
       </section>
+      <!-- <div class="col-sm-6 col-md-6 col-xs-6"> -->
           <section
             id="forecast"
             class="row mt-3"
             role="region"
             aria-live="polite"
-          ></section>
+          >
+        </section>
         </div>
       </div>
     </div>
