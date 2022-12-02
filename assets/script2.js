@@ -1,7 +1,10 @@
 let key = '1b9e0d552ea60a756ee1fa770bbaea19';
+let searchBtn = document.getElementById('searchBtn');
 let cityName = 'Atlanta';
 let requestUrl = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${key}&units=imperial`;
 
+searchBtn.onclick = function () {
+    console.log('clicked')
 fetch(requestUrl)
   .then(function (response) {
     return response.json();
@@ -19,7 +22,8 @@ fetch(requestUrl)
     currentCity = data.current
     }).then(function () {
     currentCityDisplay()
-  });
+  })
+};
 
   function currentCityDisplay(data){
     // let currentCity = data.name
