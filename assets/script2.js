@@ -30,21 +30,21 @@ function currentWeather(data){
     citySummary.append(iconEl)
     temp.innerHTML = ('Temperature: ' + Math.ceil(temp.value) + ' °F');
     wind.innerHTML = 'Wind: ' + wind.value;
-    humidity.innerHTML = 'Humidity: ' + humidity.value;
+    humidity.innerHTML = 'Humidity: ' + humidity.value +'%';
     uvIndex.innerHTML = 'UV Index: ' + uvIndex.value;
 }
 
 function getFiveDay(data, city){
-    for(i=0; i < 5; i++){
+    for(i = 0; i < 5; i ++){
         dateFiveDay[i].innerHTML = moment().add((1+ i), 'day').endOf('day').format("MM/DD/YYYY");
-        dateFiveDay[i].setAttribute('style','font-size: 12px')
+        dateFiveDay[i].setAttribute('style','font-size: 12px');
         iconElFiveDay[i].src = `./assets/icons/${iconElFiveDay[i].value}.svg`;
         tempFiveDay[i].innerHTML = `Temp: ${Math.ceil(tempFiveDay[i].value)} °F`;
-        tempFiveDay[i].setAttribute('style','font-size: 14px')
+        tempFiveDay[i].setAttribute('style','font-size: 14px');
         windFiveDay[i].innerHTML = `Wind: ${Math.ceil(windFiveDay[i].value)}`;
-        windFiveDay[i].setAttribute('style','font-size: 14px')
+        windFiveDay[i].setAttribute('style','font-size: 14px');
         humidityFiveDay[i].innerHTML = `Humidity: ${humidityFiveDay[i].value}%`;
-        humidityFiveDay[i].setAttribute('style','font-size: 12px')
+        humidityFiveDay[i].setAttribute('style','font-size: 12px');
     }
 }
 
@@ -75,7 +75,7 @@ fetch(requestUrl)
     humidity.value = data.current.humidity;
     uvIndex.value = data.current.uvi;
     //DATA FOR 5 DAY FUNCTION
-    for(i=0; i < 5; i++){
+    for(i = 0; i < 5; i ++){
         iconElFiveDay[i].value = data.daily[i].weather[0].icon;
         tempFiveDay[i].value = data.daily[i].temp.day;
         windFiveDay[i].value = data.daily[i].wind_speed;
