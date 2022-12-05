@@ -4,15 +4,15 @@ let searchCity = document.getElementById('searchCity');
 let cityName = 'Atlanta';
 let citySummary = document.getElementById('citySummary');
 let temp = document.getElementById('temp');
-let temp0 = document.getElementById('temp0');
-let temp1 = document.getElementById('temp1');
-let temp2 = document.getElementById('temp2');
-let temp3 = document.getElementById('temp3');
-let temp4 = document.getElementById('temp4');
+let tempFiveDay = document.getElementsByClassName('tempFiveDay');
 let wind = document.getElementById('wind');
+let windFiveDay = document.getElementsByClassName('windFiveDay');
 let humidity = document.getElementById('humidity');
+let humidityFiveDay = document.getElementsByClassName('humidityFiveDay');
 let uvIndex = document.getElementById('uvIndex');
 let iconEl = document.getElementById('emoji');
+let iconElFiveDay = document.getElementsByClassName('emojiFiveDay');
+let dateFiveDay = document.getElementsByClassName('dateFiveDay')
 let cardBody = document.getElementById('cardBody')
 var today = moment();
 // let currentCityData = document.getElementById('currentCity');
@@ -38,8 +38,18 @@ function currentWeather(data){
 function getFiveDay(data, city){
     // const tomorrow = moment().add(1, 'day').endOf('day');
     console.log('Five Day: ' + data);
-    temp0.innerHTML = temp4.value
-        // date = moment().add((1+ i), 'day').endOf('day');
+    for(i=0; i < 5; i++){
+        dateFiveDay[i].innerHTML = moment().add((1+ i), 'day').endOf('day').format("MM/DD/YYYY");
+        dateFiveDay[i].setAttribute('style','font-size: 12px')
+        iconElFiveDay[i].src = `./assets/icons/${iconElFiveDay[i].value}.svg`;
+        tempFiveDay[i].innerHTML = `Temp: ${Math.ceil(tempFiveDay[i].value)} °F`;
+        tempFiveDay[i].setAttribute('style','font-size: 14px')
+        windFiveDay[i].innerHTML = `Wind: ${Math.ceil(windFiveDay[i].value)}`;
+        windFiveDay[i].setAttribute('style','font-size: 14px')
+        humidityFiveDay[i].innerHTML = `Humidity: ${humidityFiveDay[i].value}%`;
+        humidityFiveDay[i].setAttribute('style','font-size: 12px')
+    }
+        // dateFiveDay = moment().add((1+ i), 'day').endOf('day');
         //     data.daily[i].temp.day,
         //     data.daily[i].wind_speed,
         //     data.daily[i].humidity,
@@ -72,17 +82,13 @@ fetch(requestUrl)
     wind.value = data.current.wind_speed;
     humidity.value = data.current.humidity;
     uvIndex.value = data.current.uvi;
-    temp0.value = data.daily[0].temp.day;
-    temp1.value = data.daily[1].temp.day;
-    temp2.value = data.daily[2].temp.day;
-    temp3.value = data.daily[3].temp.day;
-    temp4.value = data.daily[4].temp.day;
-    // for(i=0; i < 5; i++){
-    // data.daily[i].temp.day;
-    // data.daily[i].wind_speed;
-    // data.daily[i].humidity;
-    // data.daily[i].weather[0].icon;
-    // }
+    //DATA FOR 5 DAY FUNCTION
+    for(i=0; i < 5; i++){
+        iconElFiveDay[i].value = data.daily[i].weather[0].icon;
+        tempFiveDay[i].value = data.daily[i].temp.day;
+        windFiveDay[i].value = data.daily[i].wind_speed;
+        humidityFiveDay[i].value = data.daily[i].humidity;
+    }
     }).then(function () {
     currentWeather();
     getFiveDay();
