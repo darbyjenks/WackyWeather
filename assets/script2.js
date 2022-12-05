@@ -15,7 +15,6 @@ let iconElFiveDay = document.getElementsByClassName('emojiFiveDay');
 let dateFiveDay = document.getElementsByClassName('dateFiveDay')
 let cardBody = document.getElementById('cardBody')
 var today = moment();
-// let currentCityData = document.getElementById('currentCity');
 let currentCityData = $('#currentWeather');
 
 searchBtn.addEventListener('click', () => getWeather(searchCity.value));
@@ -36,8 +35,6 @@ function currentWeather(data){
 }
 
 function getFiveDay(data, city){
-    // const tomorrow = moment().add(1, 'day').endOf('day');
-    console.log('Five Day: ' + data);
     for(i=0; i < 5; i++){
         dateFiveDay[i].innerHTML = moment().add((1+ i), 'day').endOf('day').format("MM/DD/YYYY");
         dateFiveDay[i].setAttribute('style','font-size: 12px')
@@ -49,12 +46,8 @@ function getFiveDay(data, city){
         humidityFiveDay[i].innerHTML = `Humidity: ${humidityFiveDay[i].value}%`;
         humidityFiveDay[i].setAttribute('style','font-size: 12px')
     }
-        // dateFiveDay = moment().add((1+ i), 'day').endOf('day');
-        //     data.daily[i].temp.day,
-        //     data.daily[i].wind_speed,
-        //     data.daily[i].humidity,
-        //     data.daily[i].weather[i].icon,
 }
+
 function getWeather(data, city){
     if(searchCity.value === ''){
         city = cityName
@@ -75,8 +68,7 @@ fetch(requestUrl)
     }).then(function (data) {
     console.log(data);
     debugger;
-    // currentCity = data.current
-    // citySummary = city date clouds;
+    //DATA FOR CURRENT WEATHER
     iconEl.value = data.current.weather[0].icon;
     temp.value = data.current.temp;
     wind.value = data.current.wind_speed;
@@ -91,8 +83,6 @@ fetch(requestUrl)
     }
     }).then(function () {
     currentWeather();
-    getFiveDay();
-  }).then(function() {
     getFiveDay();
   })
 }
