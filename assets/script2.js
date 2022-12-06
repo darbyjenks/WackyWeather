@@ -16,6 +16,8 @@ let dateFiveDay = document.getElementsByClassName('dateFiveDay')
 let cardBody = document.getElementById('cardBody')
 var today = moment();
 let currentCityData = $('#currentWeather');
+var cityHistory = JSON.parse(localStorage.getItem("city")) || [];
+let citySearches = document.getElementById('citySearches');
 
 searchBtn.addEventListener('click', () => getWeather(searchCity.value));
 
@@ -48,12 +50,24 @@ function getFiveDay(data, city){
     }
 }
 
+function searchHistory(data, city){
+        for (i =0; i < cityHistory.length; i++) {
+            console.log(cityHistory[i]);
+            let cityBtn = '<>';
+            cityBtn.innerHTML += `<button type="button" class="btn btn-info" style="width: 100%;">${cityHistory[i]}</button>`;
+            citySearches.append(cityBtn)
+        }
+}
+
 function getWeather(data, city){
     if(searchCity.value === ''){
-        city = cityName
+        city = cityName;
     }else {
-        city = searchCity.value
+        city = searchCity.value;
+        cityHistory.unshift(city);
+        localStorage.setItem('city', JSON.stringify(cityHistory));
     }
+    debugger;
     let requestUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${key}&units=imperial`;
 fetch(requestUrl)
   .then(function (response) {
