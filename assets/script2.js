@@ -18,12 +18,17 @@ var today = moment();
 let currentCityData = $('#currentWeather');
 var cityHistory = JSON.parse(localStorage.getItem("city")) || [];
 let citySearches = document.getElementById('citySearches');
+let city = document.getElementById('city');
+
+searchHistory();
+
 
 searchBtn.addEventListener('click', () => getWeather(searchCity.value));
 
 function currentWeather(data){
     if(searchCity.value === ''){
-        citySummary.innerHTML = cityName + ' ' + today.format("MM/DD/YYYY");
+        debugger;
+        citySummary.innerHTML = city.value + ' ' + today.format("MM/DD/YYYY");
     } else {
         citySummary.innerHTML = searchCity.value + ' ' + today.format("MM/DD/YYYY");
     }
@@ -50,18 +55,31 @@ function getFiveDay(data, city){
     }
 }
 
-function searchHistory(data, city){
-        for (i =0; i < cityHistory.length; i++) {
+function searchHistory(event){
+    if(cityHistory.value !== searchCity.value){
+        for (i =0; i < cityHistory.length && i < 10; i++) {
             console.log(cityHistory[i]);
-            let cityBtn = '<>';
-            cityBtn.innerHTML += `<button type="button" class="btn btn-info" style="width: 100%;">${cityHistory[i]}</button>`;
-            citySearches.append(cityBtn)
+            let cityBtn = document.createElement('button');
+            cityBtn.setAttribute('type', 'button');
+            cityBtn.setAttribute('class', 'btn btn-info cityHist');
+            cityBtn.setAttribute('style', 'width: 100%;');
+            cityBtn.setAttribute('data-city', cityHistory[i]);
+            cityBtn.innerHTML += cityHistory[i];
+            citySearches.append(cityBtn);
+
+            cityBtn.addEventListener('click', (event, city) => {
+                debugger;
+                city = event.target.dataset.city
+                getWeather(city);
+            })
         }
+    }
+        
 }
 
 function getWeather(data, city){
     if(searchCity.value === ''){
-        city = cityName;
+        city = data;
     }else {
         city = searchCity.value;
         cityHistory.unshift(city);
@@ -71,9 +89,10 @@ function getWeather(data, city){
     let requestUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${key}&units=imperial`;
 fetch(requestUrl)
   .then(function (response) {
+    // city.value = data.name;
     return response.json();
   }).then(function (data) {
-    console.log(data);
+    console.log(data.name);
     let lat = data.coord.lat;
     let lon = data.coord.lon;
     return fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely&units=imperial&appid=${key}`);
@@ -98,6 +117,7 @@ fetch(requestUrl)
     }).then(function () {
     currentWeather();
     getFiveDay();
+    
   })
 }
 
