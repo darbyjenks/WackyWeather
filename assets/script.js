@@ -1,125 +1,125 @@
-//grabbing search bar from HTML page
-var searchInput = document.getElementById("#searchInput");
-var recentSearches = $("#history");
-//grabbing search btn from HTML page
-const searchBtn = document.getElementById("searchBtn");
-//pulling in today container
-let todayEl = document.getElementById('today');
-//pulling in 5 day forecast contanier
-let forecastEl = document.getElementById('forecast');
-let temperatureEl = document.getElementById('temperature');
-let windEl = document.getElementById('wind');
-let humidityEl = document.getElementById('humidity');
-let uvIndexEl = document.getElementById('uvIndex');
-let currentCityEl = document.getElementById('city');
-let iconEl = document.getElementById('icon');
-//setting the key and units
-let key ='d9e1eb472c1a4120348bfa4ea31aa048';
-let units = 'imperial';
+let key = '1b9e0d552ea60a756ee1fa770bbaea19';
+let searchBtn = document.getElementById('searchBtn');
+let searchCity = document.getElementById('searchCity');
+let citySummary = document.getElementById('citySummary');
+let temp = document.getElementById('temp');
+let tempFiveDay = document.getElementsByClassName('tempFiveDay');
+let wind = document.getElementById('wind');
+let windFiveDay = document.getElementsByClassName('windFiveDay');
+let humidity = document.getElementById('humidity');
+let humidityFiveDay = document.getElementsByClassName('humidityFiveDay');
+let uvIndex = document.getElementById('uvIndex');
+let iconEl = document.getElementById('emoji');
+let iconElFiveDay = document.getElementsByClassName('emojiFiveDay');
+let dateFiveDay = document.getElementsByClassName('dateFiveDay')
+let cardBody = document.getElementById('cardBody')
+var today = moment();
+let currentCityData = $('#currentWeather');
 var cityHistory = JSON.parse(localStorage.getItem("city")) || [];
+let citySearches = document.getElementById('citySearches');
+let city = document.getElementById('city');
 
-
-const weather = data;
-weather.temperature = {
-    unit : "fahrenheit"
-}
-//setting the city to what is typed in by the user
-let city = document.getElementById("searchInput").value;
-
-
-function renderCity(){
-    console.log(cityHistory);
-    recentSearches.textContent = cityHistory
-}
-
-
-function displayWeather(){
-// let currentCity = localStorage.getItem('city');
-// currentCityEl.textContent = currentCity
-// imgEl[0].setAttribute("src", `./assets/icons/${icon.value}.svg`)
-iconEl.setAttribute("src", `assets/icons/${iconEl.value}.svg`);
-// console.log(iconEl)
-iconEl.style.width = '5%';
-temperatureEl.innerHTML = temperature.value;
-windEl.innerHTML = wind.value;
-humidityEl.innerHTML = humidity.value;
-uvIndexEl.innerHTML = uvIndex.value;
+function currentWeather(){
+    citySummary.innerHTML = citySummary.value + ' ' + today.format("MM/DD/YYYY");
+    iconEl.src = `./assets/icons/${iconEl.value}.svg`;
+    iconEl.style.width = '10%';
+    citySummary.append(iconEl)
+    temp.innerHTML = ('Temperature: ' + Math.ceil(temp.value) + ' °F');
+    wind.innerHTML = 'Wind: ' + wind.value;
+    humidity.innerHTML = 'Humidity: ' + humidity.value +'%';
+    uvIndex.innerHTML = 'UV Index: ' + uvIndex.value;
 }
 
-//function for when search is clicked
-searchBtn.addEventListener("click", function(event){
-    event.preventDefault();
-    let city = document.getElementById("searchInput").value
-// console.log(city)
-//keeping the city in local storage so it will hold the value
-cityHistory.unshift(city);
-localStorage.setItem('city', JSON.stringify(cityHistory));
+function getFiveDay(){
+    for(i = 0; i < 5; i ++){
+        dateFiveDay[i].innerHTML = moment().add((1+ i), 'day').endOf('day').format("MM/DD/YYYY");
+        dateFiveDay[i].setAttribute('style','font-size: 12px');
+        iconElFiveDay[i].src = `./assets/icons/${iconElFiveDay[i].value}.svg`;
+        tempFiveDay[i].innerHTML = `Temp: ${Math.ceil(tempFiveDay[i].value)} °F`;
+        tempFiveDay[i].setAttribute('style','font-size: 14px');
+        windFiveDay[i].innerHTML = `Wind: ${Math.ceil(windFiveDay[i].value)}`;
+        windFiveDay[i].setAttribute('style','font-size: 14px');
+        humidityFiveDay[i].innerHTML = `Humidity: ${humidityFiveDay[i].value}%`;
+        humidityFiveDay[i].setAttribute('style','font-size: 12px');
+    }
+}
 
+function searchHistory(){
+        for (i =0; i < cityHistory.length && i < 10; i++) {
+            let cityBtn = document.createElement('button');
+            cityBtn.setAttribute('type', 'button');
+            cityBtn.setAttribute('class', 'btn btn-info cityHist');
+            cityBtn.setAttribute('style', 'width: 100%;');
+            cityBtn.setAttribute('data-city', cityHistory[i]);
+            cityBtn.innerHTML += cityHistory[i];
+            citySearches.append(cityBtn);
+        }
+    }
 
+function getCity(city){
+    let requestUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${key}&units=imperial`;
+    fetch(requestUrl)
+      .then(function (response) {
+        return response.json();
+      }).then(function (city) {
+        citySummary.value = city.name
+    }
+).then(function(){
+    currentWeather();
+})}
 
-//calling the pullCoords function
-pullCoords(data, city);
- }); 
-//  var lastCity = JSON.parse(localStorage.getItem('city'));
- function pullCoords(data, city) {
-    //  console.log(city)
-     let urlCoords = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=${units}&appid=${key}`
-    //  var lastCity = JSON.parse(localStorage.getItem('city'));
-    fetch(urlCoords)
-    .then(response => {
-        let data = response.json();
-       return data;
-    }).then(data=> {
-        // console.log(data)
-        let lat = data.city.coord.lat;
-        localStorage.setItem('lat', JSON.stringify(lat));
-        // console.log(lat);
-        let lon = data.city.coord.lon;
-        localStorage.setItem('lon', JSON.stringify(lon));
-        // console.log(lon);
-        return fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely&units=${units}&appid=${key}`);
-    }).then(response => {
-        let data = response.json();
-        return data;
-    }).then(data => {
-        // console.log(data);
-        // console.log(city);
-        temperature.value = (Math.floor(data.current.temp));
-        wind.value = data.current.wind_speed;
-        humidity.value = data.current.humidity;
-        uvIndex.value = data.current.uvi;
-        iconEl.value = data.current.weather[0].icon;
-        
-        // main = data.weather[0].main;
+function getWeather(city){
+    let requestUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${key}&units=imperial`;
+fetch(requestUrl)
+  .then(function (response) {
+    return response.json();
+  }).then(function (data) {
+    var lat = data.coord.lat;
+    var lon = data.coord.lon;
+    return fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely&units=imperial&appid=${key}`);
+  }).then(function(response) {
+    return response.json();
+    }).then(function (data) {
+    //DATA FOR CURRENT WEATHER
+    iconEl.value = data.current.weather[0].icon;
+    temp.value = data.current.temp;
+    wind.value = data.current.wind_speed;
+    humidity.value = data.current.humidity;
+    uvIndex.value = data.current.uvi;
+    //DATA FOR 5 DAY FUNCTION
+    for(i = 0; i < 5; i ++){
+        iconElFiveDay[i].value = data.daily[i].weather[0].icon;
+        tempFiveDay[i].value = data.daily[i].temp.day;
+        windFiveDay[i].value = data.daily[i].wind_speed;
+        humidityFiveDay[i].value = data.daily[i].humidity;
+    }
     }).then(function () {
-        // handleHistory();
-        displayWeather();
-        renderCity();
-        // console.log(data.weather[0].main);
-        // localStorage.setItem("search", main);
-    });
- }
-let lat = JSON.parse(localStorage.getItem('lat'));
-let lon = JSON.parse(localStorage.getItem('lon'));
-// function getCity(){
-//     var storedCities = JSON.parse(localStorage.getItem('city'));
+    currentWeather();
+    getFiveDay();   
+  })
+}
 
-//     if(storedCities !== null) {
-//         city = storedCities;
-//     }
-//     //This is a hepler function that will render cities to the DOM
-//     renderCity();
-// }
+citySearches.addEventListener('click', function (event){
+    var city = event.target.getAttribute('data-city');
+    getWeather(city);
+    getCity(city);
+})
 
-// function storeCities(){
-//     localStorage.getItem("city", JSON.stringify(city));
+searchBtn.addEventListener('click', function (event){
+    if (!searchCity.value) {
+        return;
+    }
+    event.preventDefault();
 
-//     //add submit event to form
-//     searchInput.addEventListener("submit", function(event) {
-//     event.preventDefault();
+    var city = searchCity.value.trim();
 
-//     var cityText = cityInput.value.trim();
-//     console.log(cityText);
-// })
+            cityHistory.unshift(city);
+            localStorage.setItem('city', JSON.stringify(cityHistory));  
+            
+    getWeather(city);
+    getCity(city);
+    searchCity.value = '';
+});
+    searchHistory();
 
-// }
+
